@@ -5,6 +5,10 @@
   "dependencies": {
     "@ethersproject/constants": "^5.4.0",
     "@ethersproject/providers": "^5.4.0",
+<<<<<<< HEAD
+=======
+    "@fluuuid/nft-contracts": "silviopaganini/nft-contracts",
+>>>>>>> 3ffa7fc85463a1c04602f0beec54e01f520461bd
     "@sentry/react": "^6.8.0",
     "@sentry/tracing": "^6.8.0",
     "@testing-library/jest-dom": "^5.14.1",
@@ -30,7 +34,10 @@
     "@web3-react/walletconnect-connector": "^6.2.0",
     "@web3-react/walletlink-connector": "^6.2.2",
     "ethers": "^5.4.0",
+<<<<<<< HEAD
     "ipfs-http-client": "48.2.2",
+=======
+>>>>>>> 3ffa7fc85463a1c04602f0beec54e01f520461bd
     "jazzicon": "^1.5.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -89,8 +96,13 @@
     "create-react-component-folder": "^0.3.7",
     "husky": "^7.0.1",
     "prettier": "^2.3.2",
+<<<<<<< HEAD
     "react-bootstrap": "^2.3.1",
     "ts-node": "^10.1.0",
     "yargs": "^17.0.1"
+=======
+    "yargs": "^17.0.1",
+    "ts-node": "^10.1.0"
+>>>>>>> 3ffa7fc85463a1c04602f0beec54e01f520461bd
   }
 }
