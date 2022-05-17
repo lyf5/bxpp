@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from '@ethersproject/providers'
 
-import { Marketplace, Mintplace, Profile, Connect } from './'
+import { Contractplace, Marketplace, Mintplace, Profile, Connect } from './'
 //import { Header, PrivateRoute, TransactionProgress } from '../components'
 import { Header, TransactionProgress } from '../components'
 import { Container } from 'theme-ui'
@@ -23,6 +23,8 @@ const Root = () => {
             <Routes>
               <Route path="/profile" element={<Profile/>} />
               <Route path="/" element={<Marketplace/>} />
+              <Route path="/Contractplace" element={<Contractplace/>} />
+              <Route path="/Marketplace" element={<Marketplace/>} />
               <Route path="/Mintplace" element={<Mintplace/>} />
             </Routes>
             <TransactionProgress />

@@ -4,12 +4,13 @@ import { useAppState } from '../../state'
 import { toShort } from '../../utils'
 
 const TransactionProgress = () => {
-  const { setTransaction, setUser, updateTokensOnSale, updateTokensOnMint } = useAppState(
+  const { setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint } = useAppState(
     useCallback(
-      ({ setTransaction, setUser, updateTokensOnSale, updateTokensOnMint }) => ({
+      ({ setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint }) => ({
         setTransaction,
         setUser,
         updateTokensOnSale,
+        updateContractsOnMarket,
         updateTokensOnMint,
       }),
       []
@@ -23,9 +24,10 @@ const TransactionProgress = () => {
     await setUser()
     setTransaction(undefined)
     updateTokensOnSale()
+    updateContractsOnMarket()
     updateTokensOnMint()
     setLoading(false)
-  }, [setTransaction, setUser, updateTokensOnSale, updateTokensOnMint])
+  }, [setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint])
 
   useEffect(() => {
     useAppState.subscribe(async ({ transaction }) => {

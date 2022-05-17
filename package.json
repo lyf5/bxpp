@@ -5,6 +5,7 @@
   "dependencies": {
     "@ethersproject/constants": "^5.4.0",
     "@ethersproject/providers": "^5.4.0",
+    "@fluuuid/nft-contracts": "silviopaganini/nft-contracts",
     "@sentry/react": "^6.8.0",
     "@sentry/tracing": "^6.8.0",
     "@testing-library/jest-dom": "^5.14.1",
@@ -88,9 +89,6 @@
     "colors": "^1.4.0",
     "create-react-component-folder": "^0.3.7",
     "husky": "^7.0.1",
-    "prettier": "^2.3.2",
-    "react-bootstrap": "^2.3.1",
-    "ts-node": "^10.1.0",
-    "yargs": "^17.0.1"
+    "prettier": "^2.3.2"
   }
 }

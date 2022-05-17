@@ -1,4 +1,5 @@
 export * from './Marketplace'
+export * from './Contractplace'
 export * from './Mintplace'
 export * from './Error'
 export * from './Root'

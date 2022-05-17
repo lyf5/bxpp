@@ -1,4 +1,4 @@
-import BXPP from '../contracts/BXPP.json'
+
 import create from 'zustand'
 import { BigNumber, Contract, utils, Event } from 'ethers'
 import IpfsClient from 'ipfs-http-client'
@@ -7,6 +7,7 @@ import { TokenProps } from '../components/Token'
 import { METADATA_API } from '../utils'
 import { ContractPropsDetails, UserProps } from '../types'
 import { conflicts, string } from 'yargs'
+import { TokenSetProps } from '../components'
 
 export interface StateContext {
   isAuthenticated: boolean
@@ -15,6 +16,7 @@ export interface StateContext {
   user?: UserProps
   itemBuffer?: Buffer
   tokensOnSale?: TokenProps[]
+  contractsOnMarket?: TokenSetProps[]
   tokensOnMint?: TokenProps[]
   ethPrice?: string
   activatingConnector?: any
@@ -22,8 +24,9 @@ export interface StateContext {
   library?: any
 
   setAuthenticated(authenticated: boolean): void
-  setContract(library: any, chainId: number): void
+  setContract(library: any, chainId: number, contractFileName: string): void
   setTokensOnSale(tokensOnSale: TokenProps[]): void
+  setContractsOnMarket(contractsOnMarket: TokenSetProps[]): void
   setTokensOnMint(tokensOnMint: TokenProps[]): void
   setEthPrice(ethPrice: string): void
   setActivatingConnector(activatingConnector: any): void
@@ -35,6 +38,7 @@ export interface StateContext {
   withdrawItem(imagePath: string): void
   setUser(address?: string): void
   updateTokensOnSale(): Promise<boolean>
+  updateContractsOnMarket(): Promise<boolean>
   updateTokensOnMint(): Promise<boolean>
   upToIPFS(): void;
   setTokenSale(id: string, price: BigNumber, onSale: boolean): Promise<boolean>
@@ -48,6 +52,7 @@ const useAppState = create<StateContext>((set, get) => ({
   user: undefined,
   itemBuffer: undefined,
   tokensOnSale: [],
+  contractsOnMarket: [],
   tokensOnMint: [],
   ethPrice: '0.0',
   activatingConnector: undefined,
@@ -55,9 +60,11 @@ const useAppState = create<StateContext>((set, get) => ({
 
   setAuthenticated: (authenticated: boolean) => set({ isAuthenticated: authenticated }),
   setItemBuffer: (bufferTemp?: Buffer) => set({ itemBuffer: bufferTemp}),
-  setContract: async (library: any, chainId: number) => {
+  setContract: async (library: any, chainId: number, contractFileName: string) => {
     try {
       if (!library) throw new Error('No Web3 Found')
+
+      var contractJSON = await import(`../contracts/${contractFileName}.json`);
 
       const networkid = (id: number) => {
         switch (id) {
@@ -68,14 +75,15 @@ const useAppState = create<StateContext>((set, get) => ({
         }
       }
       const deployedNetwork =
-        BXPP.networks[String(networkid(chainId)) as keyof typeof BXPP.networks]
+      contractJSON.networks[String(networkid(chainId)) as keyof typeof contractJSON.networks]
 
       if (!deployedNetwork) {
         throw new Error('The network you selected is no supported yet.')
       }
 
       const { address } = deployedNetwork
-      const contract = new Contract(address, BXPP.abi, library.getSigner())
+      
+      const contract = new Contract(address, contractJSON.abi, library.getSigner())
 
       const name = await contract.name()
       const symbol = await contract.symbol()
@@ -113,6 +121,7 @@ const useAppState = create<StateContext>((set, get) => ({
     }
   },
   setTokensOnSale: (tokensOnSale: TokenProps[]) => set({ tokensOnSale: tokensOnSale }),
+  setContractsOnMarket: (contractsOnMarket: TokenSetProps[]) => set({ contractsOnMarket: contractsOnMarket }),
   setTokensOnMint: (tokensOnMint: TokenProps[]) => set({ tokensOnMint: tokensOnMint }),
 
   setEthPrice: (ethPrice: string) => set({ ethPrice: ethPrice }),
@@ -233,6 +242,29 @@ const useAppState = create<StateContext>((set, get) => ({
         return acc
       }, [] as TokenProps[])
       setTokensOnSale(tokensForSale)
+      return true
+    } catch (e) {
+      console.log(e)
+      return false
+    }
+  },
+
+  updateContractsOnMarket: async () => {
+    try {
+      const { setContractsOnMarket } = get()
+
+      console.log("for debug. come state.updateContractsOnMarket!");
+      var  contractsForMarket:TokenSetProps[] = [];
+      var contractsForMarketTemp = (await (await fetch(`${METADATA_API}/contract`)).json());
+      contractsForMarketTemp.forEach((item:any) => {    
+        item.userContractList.forEach((item2:any) => {
+          contractsForMarket.push({ id: item2, image: "testimage", floorPrice:  BigNumber.from(0), name: "testname", createdBy: item.userAddress});
+        })
+      });
+
+      console.log("for debug. contractsForMarket", contractsForMarket);
+
+      setContractsOnMarket(contractsForMarket);
       return true
     } catch (e) {
       console.log(e)
