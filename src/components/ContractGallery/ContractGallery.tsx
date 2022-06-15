@@ -1,15 +1,14 @@
-import { BigNumber, utils } from 'ethers'
+import { utils } from 'ethers'
 import { useCallback, useEffect, useState } from 'react'
 import { Box, Button, Flex, Grid, Heading } from 'theme-ui'
 import { useAppState } from '../../state'
-import { Token } from '..'
 import { TokenSet } from '..'
 
 export type ContractGalleryProps = {}
 type StateOrder = 'price' | 'alpha'
 
 const ContractGallery = () => {
-  const { user, contractsOnMarket } = useAppState()
+  const { contractsOnMarket } = useAppState()
   const updateContractsOnMarket = useAppState(
     useCallback(({ updateContractsOnMarket }) => updateContractsOnMarket, [])
   )

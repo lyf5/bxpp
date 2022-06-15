@@ -1,5 +1,5 @@
 import { useWeb3React } from '@web3-react/core'
-import { TobeMint } from '../components/TobeMint'
+import { ToBeMint } from '../components/ToBeMint'
 import { Login } from '../components'
 import { useAppState } from '../state'
 
@@ -10,7 +10,7 @@ const Mintplace = () => {
   return (
     <>
       {!user && <Login />}
-      {user && active && <TobeMint />}
+      {user && active && <ToBeMint />}
     </>
   )
 }

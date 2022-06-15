@@ -5,10 +5,10 @@ import { useAppState } from '../../state'
 import { Token } from '..'
 import { Form } from 'react-bootstrap';
 
-export type TobeMintProps = {}
+export type ToBeMintProps = {}
 type StateOrder = 'price' | 'alpha'
 
-export const TobeMint = () => {
+export const ToBeMint = () => {
   const { tokensOnMint, setItemBuffer, upToIPFS } = useAppState()
   const updateTokensOnMint = useAppState(
     useCallback(({ updateTokensOnMint }) => updateTokensOnMint, [])

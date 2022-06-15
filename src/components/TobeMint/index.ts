@@ -1,1 +1,1 @@
-export * from './TobeMint'
+export * from './ToBeMint'

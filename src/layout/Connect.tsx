@@ -52,8 +52,8 @@ const Connect: FC = ({ children }) => {
 
     const update = async () => {
       try {
-        await setContract(library, chainId, "BXPP")
-        setUser(account)
+        // await setContract(library, chainId, "BXPP")
+        setUser(library, account)
       } catch (e) {
         console.log(e)
       }

@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Box, NavLink, Flex, Heading, Image, Text } from 'theme-ui'
+import { Box, NavLink, Flex, Heading, Image } from 'theme-ui'
 import { useAppState } from '../../state'
 import { UserMenu } from '..'
 

@@ -1,7 +1,7 @@
 import { ElementType } from 'react'
-import { Navigate } from 'react-router-dom'
+// import { Navigate } from 'react-router-dom'
 import { Route } from 'react-router-dom'
-import { useAppState } from '../../state'
+// import { useAppState } from '../../state'
 
 type PrivateRouteProps = {
   component: ElementType
@@ -9,7 +9,7 @@ type PrivateRouteProps = {
 }
 
 const PrivateRoute = ({ component: Component, path }: PrivateRouteProps) => {
-  const { isAuthenticated } = useAppState()
+  // const { isAuthenticated } = useAppState()
 
   return (
     <Route

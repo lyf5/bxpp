@@ -6,7 +6,7 @@ import IpfsClient from 'ipfs-http-client'
 import { TokenProps } from '../components/Token'
 import { METADATA_API } from '../utils'
 import { ContractPropsDetails, UserProps } from '../types'
-import { conflicts, string } from 'yargs'
+// import { conflicts, string } from 'yargs'
 import { TokenSetProps } from '../components'
 
 export interface StateContext {
@@ -19,16 +19,20 @@ export interface StateContext {
   contractsOnMarket?: TokenSetProps[]
   tokensOnMint?: TokenProps[]
   ethPrice?: string
+  contractCreator?: string
+  contractID?: string
   activatingConnector?: any
   transaction?: any
   library?: any
 
   setAuthenticated(authenticated: boolean): void
-  setContract(library: any, chainId: number, contractFileName: string): void
+  setContract(library: any, chainId: number, contractFileName: string, creator: string): void
   setTokensOnSale(tokensOnSale: TokenProps[]): void
   setContractsOnMarket(contractsOnMarket: TokenSetProps[]): void
   setTokensOnMint(tokensOnMint: TokenProps[]): void
   setEthPrice(ethPrice: string): void
+  setContractCreator(contractCreator: string): void
+  setContractID(contractID: string): void
   setActivatingConnector(activatingConnector: any): void
   setTransaction(transaction?: any): void
   setItemBuffer(bufferTemp?: Buffer): void
@@ -36,7 +40,7 @@ export interface StateContext {
   buyToken(id: string, price: BigNumber): void
   mintToken(price: BigNumber, tokenname: string, tokenpath: string, from?: string): void
   withdrawItem(imagePath: string): void
-  setUser(address?: string): void
+  setUser(library?: any, address?: string): void
   updateTokensOnSale(): Promise<boolean>
   updateContractsOnMarket(): Promise<boolean>
   updateTokensOnMint(): Promise<boolean>
@@ -60,11 +64,11 @@ const useAppState = create<StateContext>((set, get) => ({
 
   setAuthenticated: (authenticated: boolean) => set({ isAuthenticated: authenticated }),
   setItemBuffer: (bufferTemp?: Buffer) => set({ itemBuffer: bufferTemp}),
-  setContract: async (library: any, chainId: number, contractFileName: string) => {
+  setContract: async (library: any, chainId: number, contractCreator: string, contractID: string) => {
     try {
       if (!library) throw new Error('No Web3 Found')
 
-      var contractJSON = await import(`../contracts/${contractFileName}.json`);
+      var contractJSON = await import(`../contracts/${contractCreator}/${contractID}.json`);
 
       const networkid = (id: number) => {
         switch (id) {
@@ -101,12 +105,11 @@ const useAppState = create<StateContext>((set, get) => ({
       console.log(e)
     }
   },
-  setUser: async (address?: string) => {
+  setUser: async (library?: any, address?: string) => {
     try {
-      const { contract, user, library, getUserTokens } = get()
+      const { user, getUserTokens } = get()
 
       if (!library) throw new Error('No Web3 Found')
-      if (!contract) throw new Error('No contract found')
       if (!user && !address) throw new Error('No user found')
 
       const balance = utils.formatEther(await library.getBalance(address || user?.address || ''))
@@ -125,6 +128,8 @@ const useAppState = create<StateContext>((set, get) => ({
   setTokensOnMint: (tokensOnMint: TokenProps[]) => set({ tokensOnMint: tokensOnMint }),
 
   setEthPrice: (ethPrice: string) => set({ ethPrice: ethPrice }),
+  setContractCreator: (contractCreator: string) => set({ contractCreator: contractCreator }),
+  setContractID: (contractID: string) => set({ contractID: contractID }),
   setActivatingConnector: (activatingConnector: any) =>
     set({ activatingConnector: activatingConnector }),
   setTransaction: (transaction: any) => set({ transaction: transaction }),
@@ -275,8 +280,14 @@ const useAppState = create<StateContext>((set, get) => ({
   updateTokensOnMint: async () => {
     try {
       const { setTokensOnMint } = get()
+      const { contractCreator, contractID } = useAppState.getState()
 
-      const currentTokens = await (await fetch(`${METADATA_API}/token`)).json()
+      const currentTokens =  await (
+        await fetch(`${METADATA_API}/token`, {
+          method: 'POST',
+          body: JSON.stringify({ contractCreator: contractCreator, contractID: contractID}),
+        })
+      ).json()
 
       const tokensForMint = currentTokens.reduce((acc: TokenProps[], b: any) => {
         if (b.image !== '') {

@@ -21,11 +21,13 @@ const Root = () => {
         <Connect>
           <Container>
             <Routes>
-              <Route path="/profile" element={<Profile/>} />
-              <Route path="/" element={<Marketplace/>} />
-              <Route path="/Contractplace" element={<Contractplace/>} />
+              <Route path="/" element={<Contractplace/>} />
+              <Route path="/profile" element={<Contractplace/>} />
+              <Route path="/Mintplace" element={<Contractplace/>} />
+              
               <Route path="/Marketplace" element={<Marketplace/>} />
-              <Route path="/Mintplace" element={<Mintplace/>} />
+              <Route path="/MyNFTs" element={<Profile/>} />
+              <Route path="/Mint" element={<Mintplace/>} />
             </Routes>
             <TransactionProgress />
           </Container>

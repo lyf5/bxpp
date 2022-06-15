@@ -1,22 +1,20 @@
-import { FormEvent, MouseEvent, useState } from 'react'
+import { useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom' 
 import { utils, BigNumber, constants } from 'ethers'
+import { useWeb3React } from '@web3-react/core'
 import {
   Spinner,
   Box,
-  Flex,
   Card,
-  Button,
   Image,
-  Input,
   Text,
   Heading,
   Divider,
   NavLink,
 } from 'theme-ui'
-import useSWR from 'swr'
+
 import { useAppState } from '../../state'
-import { formatPriceEth, METADATA_API, toShort } from '../../utils'
+import { formatPriceEth, toShort } from '../../utils'
 
 export type TokenSetProps = {
   id: string
@@ -34,14 +32,25 @@ const TokenSet = ({ tokenSet }: TokenSetCompProps) => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [transfer, setTransfer] = useState<boolean>(false)
-  const [onSaleActive, setOnSale] = useState<boolean>(false)
-  const [address, setAddress] = useState<string>('')
-  const [price, setPrice] = useState<string>('')
-  const { user, ethPrice, contractDetails, setTokenSale } = useAppState()
+  const { ethPrice } = useAppState()
 
   const tokenPriceEth = formatPriceEth(tokenSet.floorPrice, ethPrice)
+
+  const { setContract, setUser, setContractCreator, setContractID } = useAppState(
+    useCallback(
+      ({ setContract, setUser, setContractCreator, setContractID }) => ({
+        setContract,
+        setUser,
+        setContractCreator,
+        setContractID,
+      }),
+      []
+    )
+  )
   
+  const { library, chainId, account } = useWeb3React()
+  
+
   if (!tokenSet)
     return (
       <Card variant="nft">
@@ -57,7 +66,22 @@ const TokenSet = ({ tokenSet }: TokenSetCompProps) => {
               pointerEvents: location.pathname === '/Marketplace' ? 'none' : 'visible',
               color: location.pathname === '/Marketplace' ? 'green' : 'white',
             }}
-            onClick={() => navigate('/Marketplace')}
+            onClick={async () => {
+              if (!chainId || !account || !library) return
+              setContractCreator(tokenSet.createdBy)
+              setContractID(tokenSet.id)
+              
+              await setContract(library, chainId, tokenSet.createdBy, tokenSet.id)
+              setUser(library, account)
+
+              switch(window.location.pathname) {
+                case "/": navigate('/Marketplace'); break;
+                case "/profile": navigate('/MyNFTs'); break;
+                case "/Mintplace": navigate('/Mint'); break;
+                default: console.log("Something wrong in switch page location"); break;
+              }
+              
+            }}
           >
       <Card variant="nft" onClick={() => console.log('price')}>
         <Image

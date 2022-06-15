@@ -15,9 +15,15 @@ export const fetcherETHUSD = async (url: string) => {
 
 export const fetcherMetadata = async (url: string) => {
   // console.log("for debug. url:", url);
+  const { contractCreator, contractID } = useAppState.getState()
   if ( url.endsWith("-1") ) return null; // end with -1 means token is not minted yet. metadata is fetched already.
   try {
-    return await (await fetch(url)).json()
+    return await (
+      await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ contractCreator: contractCreator, contractID: contractID}),
+      })
+    ).json()
   } catch (e) {
     return { error: (e as Error).message }
   }
