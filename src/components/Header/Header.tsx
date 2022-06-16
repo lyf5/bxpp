@@ -60,6 +60,16 @@ const Header = () => {
           >
             My BXPP
           </NavLink>
+          <Box sx={{ width: 50 }} />
+          <NavLink
+            sx={{
+              pointerEvents: location.pathname === '/profile' ? 'none' : 'visible',
+              color: location.pathname === '/profile' ? 'green' : 'white',
+            }}
+            onClick={() => navigate('/createTokenSet')}
+          >
+            Create NFT
+          </NavLink>
         </Flex>
       )}
     </Box>

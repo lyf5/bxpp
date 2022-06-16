@@ -9,6 +9,7 @@ import { ContractPropsDetails, UserProps } from '../types'
 // import { conflicts, string } from 'yargs'
 import { TokenSetProps } from '../components'
 
+
 export interface StateContext {
   isAuthenticated: boolean
   contract?: Contract
@@ -112,6 +113,8 @@ const useAppState = create<StateContext>((set, get) => ({
       if (!library) throw new Error('No Web3 Found')
       if (!user && !address) throw new Error('No user found')
 
+      await set({ library })
+
       const balance = utils.formatEther(await library.getBalance(address || user?.address || ''))
       const ownedTokens = await getUserTokens(address || user?.address || '')
 
@@ -188,6 +191,8 @@ const useAppState = create<StateContext>((set, get) => ({
   mintToken: async (price: BigNumber, tokenname: string, tokenpath: string, FROM?: string) => {
     try {
       const { setTransaction, contract, library, user } = get()
+      const { contractCreator, contractID } = useAppState.getState()
+
       if (!library) throw new Error('No Web3 Found')
       if (!contract) throw new Error('No contract found')
       if (!user?.address && !FROM) throw new Error('No user found')
@@ -202,7 +207,7 @@ const useAppState = create<StateContext>((set, get) => ({
       const response = await (
         await fetch(`${METADATA_API}/updateItem`, {
           method: 'POST',
-          body: JSON.stringify({"index":`${index}`, "tokenpath":tokenpath}),
+          body: JSON.stringify({"index":`${index}`, "tokenpath":tokenpath, contractCreator: contractCreator, contractID: contractID}),
         })
       ).json()
       console.log('for debug. response: ', response)
@@ -214,13 +219,14 @@ const useAppState = create<StateContext>((set, get) => ({
   withdrawItem: async (imagePath: string) => {
     try {   
       const { setTransaction } = get()
+      const { contractCreator, contractID } = useAppState.getState()
 
       console.log("for debug. imagePath: ", imagePath);
   
       const response = await (
         await fetch(`${METADATA_API}/deleteItem`, {
           method: 'POST',
-          body: JSON.stringify( imagePath ),
+          body: JSON.stringify({ imagePath: imagePath, contractCreator: contractCreator, contractID: contractID}),
         })
       ).json()
       setTransaction();
@@ -312,25 +318,25 @@ const useAppState = create<StateContext>((set, get) => ({
     console.log("for debug. itemBuffer: ", itemBuffer);
 
     const client = IpfsClient({
-      host: "ipfs.infura.io",
-      port: Number("5001"),
-      protocol: "https",
+      host: process.env.REACT_APP_HOST,
+      port: Number(process.env.REACT_APP_PORT),
+      protocol: process.env.REACT_APP_PROTOCOL,
       headers: {
         authorization: `Basic ${Buffer.from(
-          // eslint-disable-next-line no-useless-concat
-          "27BJI5914ECKwyqJvs8hMe2ioIR" + ':' + "e7a3d792120ee7de41e93cab3772226b"
+          `${process.env.REACT_APP_PROJECT_ID}:${process.env.REACT_APP_PROJECT_SECRET}`
         ).toString('base64')}`,
       },
     });
     
     try {   
       const { path } = await client.add({content: itemBuffer}); 
+      const { contractCreator, contractID } = useAppState.getState()
       console.log("for debug. ipfsPath: ", path);
   
       const response = await (
         await fetch(`${METADATA_API}/addItem`, {
           method: 'POST',
-          body: JSON.stringify( path ),
+          body: JSON.stringify({path: path, contractCreator: contractCreator, contractID: contractID}),
         })
       ).json()
   

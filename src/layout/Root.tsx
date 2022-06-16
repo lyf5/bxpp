@@ -4,7 +4,7 @@ import { Web3Provider } from '@ethersproject/providers'
 
 import { Contractplace, Marketplace, Mintplace, Profile, Connect } from './'
 //import { Header, PrivateRoute, TransactionProgress } from '../components'
-import { Header, TransactionProgress } from '../components'
+import { CreateTokenSet, Header, TransactionProgress } from '../components'
 import { Container } from 'theme-ui'
 
 function getLibrary(provider: any): Web3Provider {
@@ -28,6 +28,7 @@ const Root = () => {
               <Route path="/Marketplace" element={<Marketplace/>} />
               <Route path="/MyNFTs" element={<Profile/>} />
               <Route path="/Mint" element={<Mintplace/>} />
+              <Route path="/createTokenSet" element={<CreateTokenSet/>} />
             </Routes>
             <TransactionProgress />
           </Container>
