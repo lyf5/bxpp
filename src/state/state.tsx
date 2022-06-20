@@ -1,4 +1,5 @@
 
+import contractJSON from '../contracts/BXPP.json'
 import create from 'zustand'
 import { BigNumber, Contract, utils, Event } from 'ethers'
 import IpfsClient from 'ipfs-http-client'
@@ -8,7 +9,6 @@ import { METADATA_API } from '../utils'
 import { ContractPropsDetails, UserProps } from '../types'
 // import { conflicts, string } from 'yargs'
 import { TokenSetProps } from '../components'
-
 
 export interface StateContext {
   isAuthenticated: boolean
@@ -69,8 +69,6 @@ const useAppState = create<StateContext>((set, get) => ({
     try {
       if (!library) throw new Error('No Web3 Found')
 
-      var contractJSON = await import(`../contracts/${contractCreator}/${contractID}.json`);
-
       const networkid = (id: number) => {
         switch (id) {
           case 1337:
@@ -92,6 +90,8 @@ const useAppState = create<StateContext>((set, get) => ({
 
       const name = await contract.name()
       const symbol = await contract.symbol()
+   
+      console.log("for debug. name, symbol:", name, symbol);
 
       set({
         library,
@@ -323,14 +323,14 @@ const useAppState = create<StateContext>((set, get) => ({
       protocol: process.env.REACT_APP_PROTOCOL,
       headers: {
         authorization: `Basic ${Buffer.from(
-          `${process.env.REACT_APP_PROJECT_ID}:${process.env.PROJECT_SECRET}`
+          `${process.env.REACT_APP_PROJECT_ID}:${process.env.REACT_APP_PROJECT_SECRET}`
         ).toString('base64')}`,
       },
     });
     
     try {   
       const { path } = await client.add({content: itemBuffer}); 
-      const { contractCreator, contractID } = useAppState.getState()
+      const { contractCreator, contractID } = useAppState.getState();
       console.log("for debug. ipfsPath: ", path);
   
       const response = await (
