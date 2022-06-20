@@ -323,7 +323,7 @@ const useAppState = create<StateContext>((set, get) => ({
       protocol: process.env.REACT_APP_PROTOCOL,
       headers: {
         authorization: `Basic ${Buffer.from(
-          `${process.env.REACT_APP_PROJECT_ID}:${process.env.REACT_APP_PROJECT_SECRET}`
+          `${process.env.REACT_APP_PROJECT_ID}:${process.env.PROJECT_SECRET}`
         ).toString('base64')}`,
       },
     });
