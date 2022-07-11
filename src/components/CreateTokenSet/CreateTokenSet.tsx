@@ -25,14 +25,28 @@ export const CreateTokenSet = () => {
       <Flex sx={{ alignItems: 'center' }} mb={1}>
         <Heading as="h1">Create New TokenSet</Heading>
         <Flex ml={3}>
-        <Form>
-           <input 
-              className='te'
-              type = "text"
-              value="Please input TokenSet name."
-              id="tex"
-              // onChange = {captureFile2} 
-            />
+        <Form className="myform">
+          <tr>
+            <td>TokenSet Name : </td>
+            <Box sx={{ width: 5 }} />
+            <td> 
+              <input className='text1' type = "text" id="contractName" placeholder="TokenSet Name"/>
+            </td>
+          </tr>
+          <tr>
+            <td>TokenSet Symbol : </td>
+            <Box sx={{ width: 5 }} />
+            <td> 
+              <input className='text2' type = "text" id="contractSymbol"  placeholder="TokenSet Symbol"/>
+            </td>
+          </tr>
+          <tr>
+            <td>TokenSet URI : </td>
+            <Box sx={{ width: 5 }} />
+            <td> 
+              <input className='text3' type = "text" value="http://localhost:4000/dev/token/" id="contractURI"/>
+            </td>
+          </tr>
            <input  
               type = "button" 
               value = "Create New TokenSet"
@@ -42,11 +56,17 @@ export const CreateTokenSet = () => {
                 
                 const bodyJSON = JSON.stringify(contractJSON)
                 const bodyJSON2 = JSON.parse(bodyJSON)
-                var BXPP = new web3.eth.Contract(bodyJSON2.abi);
-                /*
+                const BXPP = new web3.eth.Contract(bodyJSON2.abi);
+                
+                const contractName = (document.getElementById("contractName") as HTMLInputElement).value
+                const contractSymbol = (document.getElementById("contractSymbol") as HTMLInputElement).value
+                const contractURI = (document.getElementById("contractURI") as HTMLInputElement).value
+
+                console.log("for debug. Contract info: ", contractName, contractSymbol, contractURI);
+                
                 await BXPP.deploy({
                   data: bodyJSON2.bytecode,
-                  arguments: ['BXPP17', 'BXPPtest17',"http://localhost:4000/dev/token/" ]
+                  arguments: [contractName, contractSymbol, contractURI]
                 })                
                 .send({
                   from: address,
@@ -58,14 +78,16 @@ export const CreateTokenSet = () => {
                     setContractID(newContractInstance.options.address)
                 });
 
-                const { contractID } = useAppState.getState()
-                */
+                const { contractID } = await useAppState.getState()
+                
                 const response = await (
                   await fetch(`${METADATA_API}/addContract`, {
                     method: 'POST',
-                    body: JSON.stringify({contractCreator: "0x0416EBcD3740D81078eCC9e2e41240D5c2D7CC9a", contractID: "0x7f25Fa3902113382FCB7D12CC859293F439070E6"}),
+                    // body: JSON.stringify({contractCreator: "0x5516EBcD3740D81078eCC9e2e41240D5c2D7CC9a", contractID: "0x6025Fa3902113382FCB7D12CC859293F439070E6"}),
+                    body: JSON.stringify({contractCreator: address, contractID: contractID}),
                   })
                 ).json()
+                console.log("for debug. Contract Path: ", response);
               }}
            /> 
        

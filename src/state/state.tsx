@@ -86,7 +86,10 @@ const useAppState = create<StateContext>((set, get) => ({
 
       const { address } = deployedNetwork
       
-      const contract = new Contract(address, contractJSON.abi, library.getSigner())
+      const contract = new Contract(contractID, contractJSON.abi, library.getSigner())
+      // const contract = new Contract(address, contractJSON.abi, library.getSigner())
+
+      console.log("for debug. contract:", contract);
 
       const name = await contract.name()
       const symbol = await contract.symbol()
@@ -243,8 +246,6 @@ const useAppState = create<StateContext>((set, get) => ({
       const { contract, setTokensOnSale } = get()
       if (!contract) throw new Error('No contract found')
 
-      console.log("for debug. come state.updateTokensOnSale!");
-
       const tokensForSale = (await contract.getAllOnSale()).reduce((acc: TokenProps[], b: any) => {
         if (b.image !== '') {
           acc.push({ id: b.id, image: b.image, price: b.price, name: b.name})
@@ -252,6 +253,7 @@ const useAppState = create<StateContext>((set, get) => ({
 
         return acc
       }, [] as TokenProps[])
+      console.log("for debug. come state.updateTokensOnSale!", tokensForSale);
       setTokensOnSale(tokensForSale)
       return true
     } catch (e) {
