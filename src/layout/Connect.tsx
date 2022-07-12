@@ -35,10 +35,9 @@ const Connect: FC = ({ children }) => {
   const { activatingConnector } = useAppState()
   const { library, chainId, account, error } = useWeb3React()
 
-  const { setContract, setUser } = useAppState(
+  const { setUser } = useAppState(
     useCallback(
-      ({ setContract, setUser }) => ({
-        setContract,
+      ({ setUser }) => ({
         setUser,
       }),
       []
@@ -52,7 +51,6 @@ const Connect: FC = ({ children }) => {
 
     const update = async () => {
       try {
-        // await setContract(library, chainId, "BXPP")
         setUser(library, account)
       } catch (e) {
         console.log(e)
@@ -60,7 +58,7 @@ const Connect: FC = ({ children }) => {
     }
 
     update()
-  }, [chainId, account, library, setContract, setUser])
+  }, [chainId, account, library, setUser])
 
   const triedEager = useEagerConnect()
   useInactiveListener(!triedEager || !!activatingConnector)
