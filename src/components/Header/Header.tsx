@@ -63,8 +63,8 @@ const Header = () => {
           <Box sx={{ width: 50 }} />
           <NavLink
             sx={{
-              pointerEvents: location.pathname === '/profile' ? 'none' : 'visible',
-              color: location.pathname === '/profile' ? 'green' : 'white',
+              pointerEvents: location.pathname === '/createTokenSet' ? 'none' : 'visible',
+              color: location.pathname === '/createTokenSet' ? 'green' : 'white',
             }}
             onClick={() => navigate('/createTokenSet')}
           >
