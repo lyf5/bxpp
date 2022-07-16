@@ -104,11 +104,10 @@ const useAppState = create<StateContext>((set, get) => ({
       })
 
       const balance = utils.formatEther(await library.getBalance(address || user?.address || ''))
-      const ownedTokens = await getUserTokens(address || user?.address || '')
 
       set({
         isAuthenticated: true,
-        user: { address: address || user?.address || '', balance, ownedTokens },
+        user: { address: address || user?.address || '', balance },
       })
     } catch (e) {
       console.log(e)
@@ -129,6 +128,7 @@ const useAppState = create<StateContext>((set, get) => ({
   getUserTokens: async (address?: string): Promise<TokenProps[]> => {
     try {
       const { contract, library, user } = get()
+      // const { balance } =  user;
 
       if (!library) throw new Error('No Web3 Found')
       if (!contract) throw new Error('No contract found')
@@ -157,8 +157,13 @@ const useAppState = create<StateContext>((set, get) => ({
           }
         })
       )
-
-      return Array.from(ownedTokens).map(([_, token]) => token)
+      
+      const ownedTokensTemp = await Array.from(ownedTokens).map(([_, token]) => token)
+      set({
+        isAuthenticated: true,
+        user: { address: address || user?.address || '', ownedTokens:ownedTokensTemp },
+      })
+      return ownedTokensTemp;
     } catch (e) {
       console.log(e)
       return []

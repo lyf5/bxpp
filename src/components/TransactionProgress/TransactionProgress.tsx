@@ -5,14 +5,15 @@ import { toShort } from '../../utils'
 import { useWeb3React } from '@web3-react/core'
 
 const TransactionProgress = () => {
-  const { setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint } = useAppState(
+  const { setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint, getUserTokens } = useAppState(
     useCallback(
-      ({ setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint }) => ({
+      ({ setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint, getUserTokens }) => ({
         setTransaction,
         setUser,
         updateTokensOnSale,
         updateContractsOnMarket,
         updateTokensOnMint,
+        getUserTokens,
       }),
       []
     )
@@ -24,12 +25,13 @@ const TransactionProgress = () => {
 
   const update = useCallback(async () => {
     await setUser(library)
+    getUserTokens();
     setTransaction(undefined)
     updateTokensOnSale()
     updateContractsOnMarket()
     updateTokensOnMint()
     setLoading(false)
-  }, [setTransaction, setUser, updateTokensOnSale, library, updateContractsOnMarket, updateTokensOnMint])
+  }, [setTransaction, setUser, updateTokensOnSale, library, updateContractsOnMarket, updateTokensOnMint, getUserTokens])
 
   useEffect(() => {
     useAppState.subscribe(async ({ transaction }) => {

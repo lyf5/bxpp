@@ -32,6 +32,7 @@ function getErrorMessage(error: Error) {
 }
 
 const Connect: FC = ({ children }) => {
+  console.log("for debug. Start connect");
   const { activatingConnector } = useAppState()
   const { library, chainId, account, error } = useWeb3React()
 
@@ -52,17 +53,19 @@ const Connect: FC = ({ children }) => {
     const update = async () => {
       try {
         setUser(library, account)
+        console.log("for debug. Start setUser in update.");
       } catch (e) {
         console.log(e)
       }
     }
-
     update()
   }, [chainId, account, library, setUser])
 
   const triedEager = useEagerConnect()
+  console.log("for debug. triedEager: ", triedEager);
+  console.log("for debug. activatingConnector: ", activatingConnector);
   useInactiveListener(!triedEager || !!activatingConnector)
-
+  console.log("for debug. End of connect");
   return (
     <>
       {error ? (

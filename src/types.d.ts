@@ -16,6 +16,6 @@ export type ContractPropsDetails = {
 
 export type UserProps = {
   address: string
-  balance: string
-  ownedTokens: TokenProps[]
+  balance?: string
+  ownedTokens?: TokenProps[]
 }

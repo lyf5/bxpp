@@ -36,13 +36,14 @@ const TokenSet = ({ tokenSet }: TokenSetCompProps) => {
 
   const tokenPriceEth = formatPriceEth(tokenSet.floorPrice, ethPrice)
 
-  const { setContract, setUser, setContractCreator, setContractID } = useAppState(
+  const { setContract, setUser, setContractCreator, setContractID, getUserTokens } = useAppState(
     useCallback(
-      ({ setContract, setUser, setContractCreator, setContractID }) => ({
+      ({ setContract, setUser, setContractCreator, setContractID, getUserTokens }) => ({
         setContract,
         setUser,
         setContractCreator,
         setContractID,
+        getUserTokens,
       }),
       []
     )
@@ -69,11 +70,12 @@ const TokenSet = ({ tokenSet }: TokenSetCompProps) => {
             onClick={async () => {
               if (!chainId || !account || !library) return
               setContractCreator(tokenSet.createdBy)
-              setContractID(tokenSet.id)
+              setContractID(tokenSet.id);
               
-              await setContract(library, chainId, tokenSet.createdBy, tokenSet.id)
-              setUser(library, account)
-
+              await setContract(library, chainId, tokenSet.createdBy, tokenSet.id);
+              setUser(library, account);
+              getUserTokens();
+              
               switch(window.location.pathname) {
                 case "/": navigate('/Marketplace'); break;
                 case "/profile": navigate('/MyNFTs'); break;
