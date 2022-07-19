@@ -17,6 +17,7 @@ const Login = () => {
   return (
     <Flex sx={{ justifyContent: 'center' }}>
       {Object.keys(connectorsByName).map((name: string) => {
+        // console.log("for debug. connectorsByName", connectorsByName[name as keyof typeof connectorsByName]);
         const currentConnector = connectorsByName[name as keyof typeof connectorsByName]
         const activating = currentConnector === activatingConnector
         const connected = currentConnector === connector

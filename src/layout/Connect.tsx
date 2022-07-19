@@ -63,8 +63,9 @@ const Connect: FC = ({ children }) => {
 
   const triedEager = useEagerConnect()
   console.log("for debug. triedEager: ", triedEager);
-  console.log("for debug. activatingConnector: ", activatingConnector);
-  useInactiveListener(!triedEager || !!activatingConnector)
+  // console.log("for debug. activatingConnector: ", activatingConnector);
+  useInactiveListener(!triedEager)
+  // useInactiveListener(!triedEager || !!activatingConnector)
   console.log("for debug. End of connect");
   return (
     <>
