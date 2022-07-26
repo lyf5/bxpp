@@ -2,18 +2,16 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Card, Flex, Spinner } from 'theme-ui'
 import { useAppState } from '../../state'
 import { toShort } from '../../utils'
-import { useWeb3React } from '@web3-react/core'
 
 const TransactionProgress = () => {
-  const { setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint, getUserTokens } = useAppState(
+  const { setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint } = useAppState(
     useCallback(
-      ({ setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint, getUserTokens }) => ({
+      ({ setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint }) => ({
         setTransaction,
         setUser,
         updateTokensOnSale,
         updateContractsOnMarket,
         updateTokensOnMint,
-        getUserTokens,
       }),
       []
     )
@@ -21,17 +19,15 @@ const TransactionProgress = () => {
 
   const transactionRef = useRef(useAppState.getState().transaction)
   const [loading, setLoading] = useState<boolean>(false)
-  const { library } = useWeb3React()
 
   const update = useCallback(async () => {
-    await setUser(library)
-    getUserTokens();
+    await setUser()
     setTransaction(undefined)
     updateTokensOnSale()
     updateContractsOnMarket()
     updateTokensOnMint()
     setLoading(false)
-  }, [setTransaction, setUser, updateTokensOnSale, library, updateContractsOnMarket, updateTokensOnMint, getUserTokens])
+  }, [setTransaction, setUser, updateTokensOnSale, updateContractsOnMarket, updateTokensOnMint])
 
   useEffect(() => {
     useAppState.subscribe(async ({ transaction }) => {
