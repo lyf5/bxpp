@@ -1,5 +1,5 @@
 
-import contractJSON from '../contracts/BXPP.json'
+import contractJSON from '../contracts/ContractTemplate.json'
 import create from 'zustand'
 import { BigNumber, Contract, utils, Event } from 'ethers'
 import IpfsClient from 'ipfs-http-client'
@@ -69,32 +69,15 @@ const useAppState = create<StateContext>((set, get) => ({
     try {
       if (!library) throw new Error('No Web3 Found')
 
-      const networkid = (id: number) => {
-        switch (id) {
-          case 1337:
-            return 5777
-          default:
-            return id
-        }
-      }
-      const deployedNetwork =
-      contractJSON.networks[String(networkid(chainId)) as keyof typeof contractJSON.networks]
-
-      if (!deployedNetwork) {
-        throw new Error('The network you selected is no supported yet.')
-      }
-
-      const { address } = deployedNetwork
-      
-      const contract = new Contract(contractID, contractJSON.abi, library.getSigner())
-      // const contract = new Contract(address, contractJSON.abi, library.getSigner())
+      const address = contractID
+      const contract = new Contract(address, contractJSON.abi, library.getSigner())
 
       console.log("for debug. contract:", contract);
 
       const name = await contract.name()
       const symbol = await contract.symbol()
    
-      console.log("for debug. name, symbol:", name, symbol);
+      console.log("for debug. name, symbol, address:", name, symbol, address);
 
       set({
         library,
@@ -116,7 +99,9 @@ const useAppState = create<StateContext>((set, get) => ({
       if (!library) throw new Error('No Web3 Found')
       if (!user && !address) throw new Error('No user found')
 
-      await set({ library })
+      set({
+        library
+      })
 
       const balance = utils.formatEther(await library.getBalance(address || user?.address || ''))
       const ownedTokens = await getUserTokens(address || user?.address || '')
@@ -318,6 +303,7 @@ const useAppState = create<StateContext>((set, get) => ({
     const { itemBuffer, setItemBuffer } = get()
     if (!itemBuffer || itemBuffer.length === 0) return;
     console.log("for debug. itemBuffer: ", itemBuffer);
+    console.log("process.env: ", process.env);
 
     const client = IpfsClient({
       host: process.env.REACT_APP_HOST,

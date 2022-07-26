@@ -13,9 +13,11 @@ const iconsMap = {
 const Login = () => {
   const { activatingConnector, setActivatingConnector } = useAppState()
   const { connector, activate } = useWeb3React()
+  console.log("for debug. start login");
   return (
     <Flex sx={{ justifyContent: 'center' }}>
       {Object.keys(connectorsByName).map((name: string) => {
+        // console.log("for debug. connectorsByName", connectorsByName[name as keyof typeof connectorsByName]);
         const currentConnector = connectorsByName[name as keyof typeof connectorsByName]
         const activating = currentConnector === activatingConnector
         const connected = currentConnector === connector
@@ -33,7 +35,9 @@ const Login = () => {
             key={name}
             onClick={() => {
               setActivatingConnector(currentConnector)
+              console.log("for debug. start setActivatingConnector");
               activate(connectorsByName[name as keyof typeof connectorsByName] as AbstractConnector)
+              console.log("for debug. start activate", connectorsByName);
             }}
           >
             {iconsMap[name as keyof typeof connectorsByName] && (

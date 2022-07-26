@@ -228,12 +228,12 @@ const Token = ({ token, isOnSale, onTransfer, onBuy, onSale, onMint }: TokenComp
           <Flex mt={3} sx={{ justifyContent: 'left', width: '100%' }}>
             <Button
               sx={{
-                opacity: !!user?.ownedTokens.find(
+                opacity: !!(user?.ownedTokens|| []).find(
                   a => utils.formatUnits(a.id) === utils.formatUnits(token.id)
                 )
                   ? 0.5
                   : 1,
-                pointerEvents: !!user?.ownedTokens.find(
+                pointerEvents: !!(user?.ownedTokens || []).find(
                   a => utils.formatUnits(a.id) === utils.formatUnits(token.id)
                 )
                   ? 'none'

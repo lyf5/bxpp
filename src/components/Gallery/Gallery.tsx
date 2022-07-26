@@ -50,7 +50,7 @@ const Gallery = () => {
               : Number(utils.formatEther(a.price.sub(b.price)))
           )
           .map((i, index) => (
-            <Token onBuy={!user?.ownedTokens.find(t => t.id === i.id)} token={i} key={index} />
+            <Token onBuy={!(user?.ownedTokens || []).find(t => t.id === i.id)} token={i} key={index} />
           ))}
       </Grid>
     </Box>

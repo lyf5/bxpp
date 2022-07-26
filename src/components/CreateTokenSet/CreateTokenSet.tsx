@@ -1,4 +1,4 @@
-import contractJSON from '../../contracts/BXPP.json'
+import contractJSON from '../../contracts/ContractTemplate.json'
 import { useCallback } from 'react'
 import { Box, Flex, Heading } from 'theme-ui'
 import { useAppState } from '../../state'
@@ -8,10 +8,11 @@ import Web3 from 'web3';
 
 export const CreateTokenSet = () => {  
   const { user } = useAppState()
-  const { setContractID } = useAppState(
+  const { setContractID, setTransaction } = useAppState(
     useCallback(
-      ({ setContractID }) => ({
+      ({ setContractID, setTransaction }) => ({
         setContractID,
+        setTransaction,
       }),
       []
     )
@@ -64,7 +65,7 @@ export const CreateTokenSet = () => {
 
                 console.log("for debug. Contract info: ", contractName, contractSymbol, contractURI);
                 
-                await BXPP.deploy({
+                const tx = await BXPP.deploy({
                   data: bodyJSON2.bytecode,
                   arguments: [contractName, contractSymbol, contractURI]
                 })                
@@ -73,21 +74,20 @@ export const CreateTokenSet = () => {
                   // gas: ,
                   // gasPrice: '3000000'
                 })
-                .then(function(newContractInstance){
+                .then(async function(newContractInstance){
                     console.log("for debug. ContractID: ", newContractInstance.options.address); // 具有新合同地址的合约实例
-                    setContractID(newContractInstance.options.address)
-                });
-
-                const { contractID } = await useAppState.getState()
-                
-                const response = await (
-                  await fetch(`${METADATA_API}/addContract`, {
-                    method: 'POST',
-                    // body: JSON.stringify({contractCreator: "0x5516EBcD3740D81078eCC9e2e41240D5c2D7CC9a", contractID: "0x6025Fa3902113382FCB7D12CC859293F439070E6"}),
-                    body: JSON.stringify({contractCreator: address, contractID: contractID}),
-                  })
-                ).json()
-                console.log("for debug. Contract Path: ", response);
+                    
+                    const response = await (
+                      await fetch(`${METADATA_API}/addContract`, {
+                        method: 'POST',
+                        // body: JSON.stringify({contractCreator: "0x5516EBcD3740D81078eCC9e2e41240D5c2D7CC9a", contractID: "0x6025Fa3902113382FCB7D12CC859293F439070E6"}),
+                        body: JSON.stringify({contractCreator: address, contractID: newContractInstance.options.address}),
+                      })
+                    ).json()
+                    setContractID(newContractInstance.options.address);
+                    console.log("for debug. Contract Path: ", response);
+                });  
+                setTransaction(tx);             
               }}
            /> 
        

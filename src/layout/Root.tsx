@@ -8,12 +8,14 @@ import { CreateTokenSet, Header, TransactionProgress } from '../components'
 import { Container } from 'theme-ui'
 
 function getLibrary(provider: any): Web3Provider {
+  console.log("for debug. getLibrary.");
   const library = new Web3Provider(provider)
   library.pollingInterval = 12000
   return library
 }
 
 const Root = () => {
+  console.log("for debug. Root start.");
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Header />
