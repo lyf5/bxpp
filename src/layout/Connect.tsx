@@ -32,13 +32,14 @@ function getErrorMessage(error: Error) {
 }
 
 const Connect: FC = ({ children }) => {
-  console.log("for debug. Start connect");
-  const { activatingConnector } = useAppState()
+  // console.log("for debug. Start connect");
+  // const { activatingConnector } = useAppState()
   const { library, chainId, account, error } = useWeb3React()
 
-  const { setUser } = useAppState(
+  const { setLibrary, setUser } = useAppState(
     useCallback(
-      ({ setUser }) => ({
+      ({ setLibrary, setUser }) => ({
+        setLibrary,
         setUser,
       }),
       []
@@ -52,21 +53,21 @@ const Connect: FC = ({ children }) => {
 
     const update = async () => {
       try {
-        setUser(library, account)
-        console.log("for debug. Start setUser in update.");
+        setLibrary(library)
+        setUser(account)
       } catch (e) {
         console.log(e)
       }
     }
     update()
-  }, [chainId, account, library, setUser])
+  }, [chainId, account, library, setLibrary, setUser])
 
   const triedEager = useEagerConnect()
-  console.log("for debug. triedEager: ", triedEager);
+  // console.log("for debug. triedEager: ", triedEager);
   // console.log("for debug. activatingConnector: ", activatingConnector);
   useInactiveListener(!triedEager)
   // useInactiveListener(!triedEager || !!activatingConnector)
-  console.log("for debug. End of connect");
+  // console.log("for debug. End of connect");
   return (
     <>
       {error ? (

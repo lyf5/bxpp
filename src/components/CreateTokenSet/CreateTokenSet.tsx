@@ -1,10 +1,11 @@
-import contractJSON from '../../contracts/ContractTemplate.json'
+import contractJSON from '../../contracts/BXPP.json'
 import { useCallback } from 'react'
 import { Box, Flex, Heading } from 'theme-ui'
 import { useAppState } from '../../state'
 import { METADATA_API } from '../../utils'
 import { Form } from 'react-bootstrap';
 import Web3 from 'web3';
+import { ethers } from 'ethers';
 
 export const CreateTokenSet = () => {  
   const { user } = useAppState()
@@ -52,12 +53,9 @@ export const CreateTokenSet = () => {
               type = "button" 
               value = "Create New TokenSet"
               onClick={async () => {
-
-                const web3 = new Web3(window.ethereum);
-                
+                   
                 const bodyJSON = JSON.stringify(contractJSON)
                 const bodyJSON2 = JSON.parse(bodyJSON)
-                const BXPP = new web3.eth.Contract(bodyJSON2.abi);
                 
                 const contractName = (document.getElementById("contractName") as HTMLInputElement).value
                 const contractSymbol = (document.getElementById("contractSymbol") as HTMLInputElement).value
@@ -65,15 +63,23 @@ export const CreateTokenSet = () => {
 
                 console.log("for debug. Contract info: ", contractName, contractSymbol, contractURI);
                 
+                /***
+                const web3 = new Web3(window.ethereum);
+                const BXPP = new web3.eth.Contract(bodyJSON2.abi);
                 const tx = await BXPP.deploy({
-                  data: bodyJSON2.bytecode,
-                  arguments: [contractName, contractSymbol, contractURI]
-                })                
+                  'data': bodyJSON2.bytecode,
+                  'arguments': [ethers.utils.formatBytes32String(contractName), ethers.utils.formatBytes32String(contractSymbol), ethers.utils.formatBytes32String(contractURI)]
+                })         
                 .send({
-                  from: address,
+                  'from': address,
                   // gas: ,
                   // gasPrice: '3000000'
+                }, function(error, transactionHash){ console.log("error/transactionHash: ", error, transactionHash) })
+                .on('error', function(error){ console.log("error: ", error) })
+                .on('transactionHash', function(transactionHash){ console.log("transactionHash: ", transactionHash) })
+                .on('receipt', function(receipt){ console.log(receipt.contractAddress) // 收据中包含了新的合约地址
                 })
+                .on('confirmation', function(confirmationNumber, receipt){ console.log("confirmationNumber:", confirmationNumber) })
                 .then(async function(newContractInstance){
                     console.log("for debug. ContractID: ", newContractInstance.options.address); // 具有新合同地址的合约实例
                     
@@ -86,8 +92,18 @@ export const CreateTokenSet = () => {
                     ).json()
                     setContractID(newContractInstance.options.address);
                     console.log("for debug. Contract Path: ", response);
-                });  
-                setTransaction(tx);             
+                });   
+                 ***/
+                
+                const provider = new ethers.providers.Web3Provider(window.ethereum);
+                const signer = provider.getSigner();
+                const factory = new ethers.ContractFactory( bodyJSON2.abi, bodyJSON2.bytecode, signer );
+
+                await factory.deploy([contractName, contractSymbol, contractURI])
+                .then(async function(contract){ 
+                  console.log("for debug. Contract Path: ", contract.address); 
+                });                
+                
               }}
            /> 
        

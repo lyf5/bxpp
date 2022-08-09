@@ -72,8 +72,8 @@ const TokenSet = ({ tokenSet }: TokenSetCompProps) => {
               setContractCreator(tokenSet.createdBy)
               setContractID(tokenSet.id);
               
-              await setContract(library, chainId, tokenSet.createdBy, tokenSet.id);
-              setUser(library, account);
+              await setContract(tokenSet.id);
+              setUser(account);
               getUserTokens();
               
               switch(window.location.pathname) {

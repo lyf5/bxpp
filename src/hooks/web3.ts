@@ -10,7 +10,7 @@ export function useEagerConnect() {
   const [tried, setTried] = useState(false)
 
   useEffect(() => {
-    console.log("for debug. connector: ", connector);
+    // console.log("for debug. connector: ", connector);
 
     // if (connector === walletconnect) {
     //   walletconnect.on(URI_AVAILABLE, uri => {
@@ -47,7 +47,7 @@ export function useEagerConnect() {
 // }
 
 export function useInactiveListener(suppress: boolean = false) {
-  console.log("for debug. start useInactiveListener");
+  // console.log("for debug. start useInactiveListener");
   const { active, error, activate } = useWeb3React()
 
   useEffect(() => {

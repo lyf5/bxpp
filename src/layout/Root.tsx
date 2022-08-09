@@ -15,7 +15,7 @@ function getLibrary(provider: any): Web3Provider {
 }
 
 const Root = () => {
-  console.log("for debug. Root start.");
+  // console.log("for debug. Root start.");
   return (
     <Router basename={process.env.PUBLIC_URL}>
       <Header />

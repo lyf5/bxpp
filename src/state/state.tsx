@@ -27,7 +27,7 @@ export interface StateContext {
   library?: any
 
   setAuthenticated(authenticated: boolean): void
-  setContract(library: any, chainId: number, contractFileName: string, creator: string): void
+  setContract(creator: string): void
   setTokensOnSale(tokensOnSale: TokenProps[]): void
   setContractsOnMarket(contractsOnMarket: TokenSetProps[]): void
   setTokensOnMint(tokensOnMint: TokenProps[]): void
@@ -41,6 +41,7 @@ export interface StateContext {
   buyToken(id: string, price: BigNumber): void
   mintToken(price: BigNumber, tokenname: string, tokenpath: string, from?: string): void
   withdrawItem(imagePath: string): void
+  setLibrary(library?: any): void
   setUser(library?: any, address?: string): void
   updateTokensOnSale(): Promise<boolean>
   updateContractsOnMarket(): Promise<boolean>
@@ -65,8 +66,10 @@ const useAppState = create<StateContext>((set, get) => ({
 
   setAuthenticated: (authenticated: boolean) => set({ isAuthenticated: authenticated }),
   setItemBuffer: (bufferTemp?: Buffer) => set({ itemBuffer: bufferTemp}),
-  setContract: async (library: any, chainId: number, contractCreator: string, contractID: string) => {
+  setLibrary: (library?: any) => set({library}),
+  setContract: async (contractID: string) => {
     try {
+      const { library } = get()
       if (!library) throw new Error('No Web3 Found')
 
       const address = contractID
@@ -80,7 +83,6 @@ const useAppState = create<StateContext>((set, get) => ({
       console.log("for debug. name, symbol, address:", name, symbol, address);
 
       set({
-        library,
         contract,
         contractDetails: {
           name,
@@ -92,16 +94,12 @@ const useAppState = create<StateContext>((set, get) => ({
       console.log(e)
     }
   },
-  setUser: async (library?: any, address?: string) => {
+  setUser: async (address?: string) => {
     try {
-      const { user, getUserTokens } = get()
+      const { user, library } = get()
 
       if (!library) throw new Error('No Web3 Found')
       if (!user && !address) throw new Error('No user found')
-
-      set({
-        library
-      })
 
       const balance = utils.formatEther(await library.getBalance(address || user?.address || ''))
 
@@ -128,7 +126,8 @@ const useAppState = create<StateContext>((set, get) => ({
   getUserTokens: async (address?: string): Promise<TokenProps[]> => {
     try {
       const { contract, library, user } = get()
-      // const { balance } =  user;
+      if (!user) return []
+      const { balance } =  user;
 
       if (!library) throw new Error('No Web3 Found')
       if (!contract) throw new Error('No contract found')
@@ -161,7 +160,7 @@ const useAppState = create<StateContext>((set, get) => ({
       const ownedTokensTemp = await Array.from(ownedTokens).map(([_, token]) => token)
       set({
         isAuthenticated: true,
-        user: { address: address || user?.address || '', ownedTokens:ownedTokensTemp },
+        user: { address: address || user?.address || '', balance, ownedTokens:ownedTokensTemp },
       })
       return ownedTokensTemp;
     } catch (e) {

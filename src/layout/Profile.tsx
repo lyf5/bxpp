@@ -9,8 +9,8 @@ const Profile = () => {
   const { user, tokensOnSale } = useAppState()
 
   if (!user) return null
-
   const { address, balance, ownedTokens } = user
+  console.log("for debug. balance: ", balance);
 
   return (
     <Box>
