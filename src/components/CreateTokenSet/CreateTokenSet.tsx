@@ -9,11 +9,10 @@ import { ethers } from 'ethers';
 
 export const CreateTokenSet = () => {  
   const { user } = useAppState()
-  const { setContractID, setTransaction } = useAppState(
+  const { setContractID } = useAppState(
     useCallback(
-      ({ setContractID, setTransaction }) => ({
+      ({ setContractID }) => ({
         setContractID,
-        setTransaction,
       }),
       []
     )
@@ -66,9 +65,9 @@ export const CreateTokenSet = () => {
                 /***
                 const web3 = new Web3(window.ethereum);
                 const BXPP = new web3.eth.Contract(bodyJSON2.abi);
-                const tx = await BXPP.deploy({
+                await BXPP.deploy({
                   'data': bodyJSON2.bytecode,
-                  'arguments': [ethers.utils.formatBytes32String(contractName), ethers.utils.formatBytes32String(contractSymbol), ethers.utils.formatBytes32String(contractURI)]
+                  'arguments': [contractName, contractSymbol, contractURI]
                 })         
                 .send({
                   'from': address,
@@ -95,8 +94,11 @@ export const CreateTokenSet = () => {
                 });   
                  ***/
                 
+                window.ethereum.request({ method: 'eth_requestAccounts' });
                 const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const signer = provider.getSigner();
+
+                const signer = provider.getSigner()
+                console.log("Account:", await signer.getAddress());
                 const factory = new ethers.ContractFactory( bodyJSON2.abi, bodyJSON2.bytecode, signer );
 
                 await factory.deploy([contractName, contractSymbol, contractURI])
