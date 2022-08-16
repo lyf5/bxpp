@@ -1,4 +1,4 @@
-import contractJSON from '../../contracts/BXPP.json'
+import contractJSON from '../../contracts/ContractTemplate.json'
 import { useCallback } from 'react'
 import { Box, Flex, Heading } from 'theme-ui'
 import { useAppState } from '../../state'
@@ -99,13 +99,24 @@ export const CreateTokenSet = () => {
 
                 const signer = provider.getSigner()
                 console.log("Account:", await signer.getAddress());
-                const factory = new ethers.ContractFactory( bodyJSON2.abi, bodyJSON2.bytecode, signer );
-
-                await factory.deploy([contractName, contractSymbol, contractURI])
-                .then(async function(contract){ 
-                  console.log("for debug. Contract Path: ", contract.address); 
-                });                
                 
+                const factory = new ethers.ContractFactory( bodyJSON2.abi, bodyJSON2.bytecode, signer );
+                console.log("factory.signer:", factory.signer);
+                const contractBXPP = await factory.deploy(contractName, contractSymbol, contractURI)
+                .then(async function(contract){ 
+                  console.log("for debug. Contract address: ", contract.address); // 具有新合同地址的合约实例
+                    
+                    const response = await (
+                      await fetch(`${METADATA_API}/addContract`, {
+                        method: 'POST',
+                        // body: JSON.stringify({contractCreator: "0x5516EBcD3740D81078eCC9e2e41240D5c2D7CC9a", contractID: "0x6025Fa3902113382FCB7D12CC859293F439070E6"}),
+                        body: JSON.stringify({contractCreator: address, contractID: contract.address}),
+                      })
+                    ).json()
+                    setContractID(contract.address);
+                    console.log("for debug. Contract Path: ", response); 
+                });         
+            
               }}
            /> 
        
